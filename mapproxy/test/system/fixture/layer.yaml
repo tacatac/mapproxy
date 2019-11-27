@@ -5,6 +5,10 @@ globals:
     meta_buffer: 0
     tile_lock_dir: defaulttilelockdir
 
+  srs:
+    preferred_src_proj:
+      'EPSG:25831': ['EPSG:25832', 'EPSG:3857']
+
   image:
     # resampling: 'bicubic'
     paletted: False
@@ -19,7 +23,7 @@ services:
   kml:
   wmts:
   wms:
-    image_formats: ['image/png', 'image/jpeg', 'png8']
+    image_formats: ['image/png', 'image/jpeg', 'png8', 'image/tiff']
     srs: ['EPSG:4326', 'CRS:84', 'EPSG:900913', 'EPSG:3857', 'EPSG:31466', 'EPSG:31467', 'EPSG:31468', 'EPSG:25831', 'EPSG:25832', 'EPSG:25833']
     bbox_srs:
         - 'EPSG:3857'

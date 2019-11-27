@@ -383,6 +383,7 @@ mapproxy_yaml_spec = {
           'axis_order_ne': [str()],
           'axis_order_en': [str()],
           'proj_data_dir': str(),
+          'preferred_src_proj': {anything(): [str()]},
         },
         'tiles': {
             'expires_hours': number(),
@@ -413,6 +414,9 @@ mapproxy_yaml_spec = {
             'use_direct_from_level': number(),
             'use_direct_from_res': number(),
             'link_single_color_images': one_of(bool(), 'symlink', 'hardlink'),
+            'cache_rescaled_tiles': bool(),
+            'upscale_tiles': int(),
+            'downscale_tiles': int(),
             'watermark': {
                 'text': string_type,
                 'font_size': number(),
@@ -587,13 +591,3 @@ mapproxy_yaml_spec = {
     'parts': anything(),
 }
 
-if __name__ == '__main__':
-    import sys
-    import yaml
-    for f in sys.argv[1:]:
-        data = yaml.load(open(f))
-        try:
-            validate(mapproxy_yaml_spec, data)
-        except ValidationError as ex:
-            for err in ex.errors:
-                print('%s: %s' % (f, err))

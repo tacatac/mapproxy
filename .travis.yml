@@ -5,15 +5,17 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
-  # for 3.7 see at matrix.include
+  - "3.7"
 
 services:
   - couchdb
-  - riak
   - redis-server
 
 addons:
   apt:
+    sources:
+      - sourceline: 'deb https://packagecloud.io/basho/riak/ubuntu/ xenial main'
+        key_url: 'https://packagecloud.io/basho/riak/gpgkey'
     packages:
       - proj-bin
       - libgeos-dev
@@ -27,11 +29,13 @@ addons:
       - libfreetype6-dev
       - protobuf-compiler
       - libprotoc-dev
+      - riak
 
 env:
   global:
     - MAPPROXY_TEST_COUCHDB=http://127.0.0.1:5984
     - MAPPROXY_TEST_REDIS=127.0.0.1:6379
+
     - MAPPROXY_TEST_RIAK_HTTP=http://localhost:8098
     - MAPPROXY_TEST_RIAK_PBC=pbc://localhost:8087
 
@@ -41,29 +45,18 @@ env:
 
 matrix:
   include:
-    # Test 2.7 and 3.6 also with latest Pillow version
+    # Test 2.7 and 3.7 also with latest Pillow version
     - python: "2.7"
       env: USE_LATEST_PILLOW=1
-    - python: "3.6"
+    - python: "3.7"
       env: USE_LATEST_PILLOW=1
-
-    # Python 3.7 requires xenial and sudo
-    # https://github.com/travis-ci/travis-ci/issues/9069#issuecomment-425720905
-    - python: "3.7"
-      sudo: required
-      dist: xenial
-
-  allow_failures:
-    - python: "3.7"
 
 cache:
   directories:
     - $HOME/.cache/pip
 
 before_install:
-    # default open file limit is too low for riak
-    - echo -n "ulimit -n 4096" | sudo tee /etc/default/riak
-    - sudo service riak restart || sudo systemctl restart riak
+    - "sudo systemctl start riak"
 
 install:
     - "pip install -r requirements-tests.txt"
